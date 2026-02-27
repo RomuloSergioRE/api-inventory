@@ -1,47 +1,46 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(SELLER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Status   @default(ACTIVE)
+
+  @@map("users")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  sku         String   @unique
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  status      Status   @default(ACTIVE)
+
+  @@map("products")
+}
+
 enum Role {
-  ADMIN          
-  STOCK_MANAGER  
-  SELLER         
+  ADMIN
+  STOCK_MANAGER
+  SELLER
 }
 
 enum Status {
   ACTIVE
   INACTIVE
-}
-
-model User {
-  id        String     @id @default(uuid())
-  name      String
-  email     String     @unique
-  password  String
-  role      Role       @default(SELLER)
-  status    Status     @default(ACTIVE) 
-
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  @@map("users") 
-}
-model Product {
-  id          String   @id @default(uuid())
-  sku         String   @unique  
-  name        String
-  description String?
-  price       Decimal  @db.Decimal(10, 2)
-  stock       Int      @default(0)
-  status      Status   @default(ACTIVE)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("products")
 }
